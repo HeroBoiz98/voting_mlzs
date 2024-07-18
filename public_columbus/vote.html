@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voting Website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+           
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            background: rgb(41,67,208);
+            background: linear-gradient(27deg, rgba(41,67,208,1) 0%, rgba(207,201,201,1) 50%, rgba(54,81,230,1) 100%);
+        }
+
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .candidate-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+            justify-items: center;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .candidate-image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .candidate-image:hover {
+            transform: scale(1.05);
+            border-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .candidate-image.selected {
+            border-color: rgba(145, 255, 20, 0.8);
+            border-style: dashed;
+            border-width: 10px;
+        }
+
+        .submit-button {
+            margin-top: 30px;
+        }
+
+        .submit-button button {
+            padding: 15px 30px;
+            font-size: 40px;
+            font-weight: 500;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .submit-button button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .submit-button button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .submit-button button:disabled:hover {
+            background-color: #ccc;
+            transform: none;
+        }
+
+        @media (max-width: 600px) {
+            .candidate-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        </style>
+ <script>
+    function submitVotes() {
+        var selectedImages = document.querySelectorAll('.candidate-image.selected');
+        if (selectedImages.length !== 1) {
+            alert('Please select exactly 1 candidate.');
+            return;
+        }
+
+        var selectedCandidate = selectedImages[0].alt;
+        var selectedCategory = selectedImages[0].parentNode.previousElementSibling.innerText.trim();
+
+        fetch('/vote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ category: selectedCategory, candidate: selectedCandidate })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to submit vote');
+            }
+            return response.text();
+        })
+        
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to submit vote. Please try again.');
+        });
+        fetch('../ip.json')
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Failed to fetch IP address');
+    }
+    return response.json();
+})
+.then(data => {
+    var ipAddress = data.ip;
+    window.location.href = 'http://' + ipAddress + ':1100';
+})
+.catch(error => {
+    console.error('Error fetching IP:', error);
+    alert('Failed to redirect. Please try again later.');
+});
+
+    }
+</script>
+    <!-- <script>
+        function castVote(category, candidate) {
+            var votes = JSON.parse(localStorage.getItem('votes')) || {};
+            if (!votes[category]) {
+                votes[category] = {};
+            }
+            if (!votes[category][candidate]) {
+                votes[category][candidate] = 0;
+            }
+            votes[category][candidate]++;
+            localStorage.setItem('votes', JSON.stringify(votes));
+            alert('Your vote for ' + candidate + ' in ' + category + ' category has been cast successfully!');
+        }
+
+        function submitVotes() {
+            var selectedImages = document.querySelectorAll('.candidate-image.selected');
+            var votes = JSON.parse(localStorage.getItem('votes')) || {};
+
+            if (selectedImages.length !== 1) {
+                alert('Please select exactly 1 candidate.');
+                return;
+            }
+
+            selectedImages.forEach(function (image) {
+                var category = image.parentNode.previousElementSibling.innerText;
+                var candidate = image.alt;
+
+                if (!votes[category]) {
+                    votes[category] = {};
+                }
+
+                if (!votes[category][candidate]) {
+                    votes[category][candidate] = 0;
+                }
+
+                votes[category][candidate]++;
+            });
+
+            localStorage.setItem('votes', JSON.stringify(votes));
+            alert('Votes submitted successfully!');
+            window.location.href = 'thankyou.html'; // Redirect to thankyou.html
+        }
+    </script> -->
+</head>
+<body>
+    <h1> Columbus </h1>
+    <h2>VOTE</h2>
+    <div class="candidate-container">
+       
+        <img src="CC cap Trisha Patel.jpg" alt="Trisha Patel" class="candidate-image" onclick="this.classList.toggle('selected')">
+        <img src="CC cap Prachi Choudhary.JPG" alt="Prachi Choudhary" class="candidate-image" onclick="this.classList.toggle('selected')">
+        <img src="CC cap Aaddya Dwivedi.png" alt="Aaddya Dwivedi" class="candidate-image" onclick="this.classList.toggle('selected')">
+        <img src="CC cap Kavya Pasad.jpg" alt="Kavya Pasad" class="candidate-image" onclick="this.classList.toggle('selected')">
+    </div>
+
+    <div class="submit-button">
+        <button onclick="submitVotes()" id="vote-button" disabled>Submit Votes</button>
+    </div>
+
+    <script>
+        var selectedImages = document.querySelectorAll('.candidate-image');
+        var voteButton = document.getElementById('vote-button');
+
+        selectedImages.forEach(function (image) {
+            image.addEventListener('click', function () {
+                var selectedImagesCount = document.querySelectorAll('.candidate-image.selected').length;
+                voteButton.disabled = selectedImagesCount === 0;
+            });
+        });
+    </script>
+</body>
+</html>

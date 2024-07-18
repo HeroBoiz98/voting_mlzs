@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voting Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .category-result {
+            margin: 10px 0;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .candidate-result {
+            margin: 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .winner {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .candidate-img {
+            max-width: 50px;
+            max-height: 50px;
+            margin-right: 10px;
+            vertical-align: middle;
+            border-radius: 50%;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Voting Results</h1>
+    <div id="result-container"></div>
+    <button onclick="resetVotes()">Reset Votes</button>
+
+    <script>
+        function displayResults() {
+            var votes = JSON.parse(localStorage.getItem('votes')) || {};
+            var resultContainer = document.getElementById('result-container');
+
+            for (var category in votes) {
+                var categoryResult = document.createElement('div');
+                categoryResult.classList.add('category-result');
+                categoryResult.innerText = category;
+                resultContainer.appendChild(categoryResult);
+
+                var candidates = votes[category];
+
+                // Find the candidate with the highest votes
+                var highestVotes = 0;
+                var winner;
+
+                for (var candidate in candidates) {
+                    if (candidates[candidate] > highestVotes) {
+                        highestVotes = candidates[candidate];
+                        winner = candidate;
+                    }
+                }
+
+                var table = document.createElement('table');
+                var headerRow = document.createElement('tr');
+                var headerCell1 = document.createElement('th');
+                headerCell1.innerText = 'Candidate';
+                var headerCell2 = document.createElement('th');
+                headerCell2.innerText = 'Votes';
+                headerRow.appendChild(headerCell1);
+                headerRow.appendChild(headerCell2);
+                table.appendChild(headerRow);
+
+                for (var candidate in candidates) {
+                    var row = document.createElement('tr');
+                    var cell1 = document.createElement('td');
+                    var cell2 = document.createElement('td');
+
+                    // Create image element for the winner
+                    var candidateImg = document.createElement('img');
+                    if (candidate === winner) {
+                        candidateImg.src = 'path/to/winner-image.jpg'; // Replace with the actual path to the winner's image
+                        candidateImg.alt = 'Winner';
+                        cell1.appendChild(candidateImg);
+                    }
+
+                    cell1.innerText = candidate;
+                    cell2.innerText = candidates[candidate] + ' votes';
+
+                    if (candidate === winner) {
+                        row.classList.add('winner');
+                    }
+
+                    row.appendChild(cell1);
+                    row.appendChild(cell2);
+                    table.appendChild(row);
+                }
+
+                resultContainer.appendChild(table);
+            }
+        }
+
+        function resetVotes() {
+            localStorage.removeItem('votes');
+            alert('Votes have been reset!');
+        }
+
+        window.onload = displayResults;
+    </script>
+</body>
+</html>

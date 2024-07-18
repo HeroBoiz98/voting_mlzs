@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Homepage</title>
+
+</head>
+<link rel="stylesheet" href="style.css">
+<body>
+  
+  <h3 style="font-size: 30px;">VOTE!</h3>
+  <form onsubmit="submitCode(event)"> 
+    <label for="codeInput" style="font-size: 40px; color: rgb(3, 34, 29); font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Enter your unique code:</label>
+    <input type="text" id="codeInput" required>
+    <br>
+    <input type="submit" value="Submit">
+    <p id="errorMessage" style="color: red; display: none;">You have already voted.</p>
+  </form>
+<!-- 
+  <button onclick="resetVotes()">Reset Votes</button> -->
+
+  <script>
+    function submitCode(event) {
+      event.preventDefault();
+      var codeInput = document.getElementById("codeInput").value;
+
+      // Perform code validation here
+      // You can add your own validation logic to check the uniqueness of the code
+
+      // Assuming the code is valid, check if the user has already voted
+      if (hasVoted(codeInput)) {
+        var errorMessage = document.getElementById("errorMessage");
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      // If the user hasn't voted, store the code and redirect to the voting page
+      storeVote(codeInput);
+      window.location.href = "vote.html";
+    }
+
+    // Function to check if the user has already voted
+    function hasVoted(code) {
+      var votedCodes = localStorage.getItem("votedCodes");
+      if (votedCodes) {
+        votedCodes = JSON.parse(votedCodes);
+        return votedCodes.includes(code);
+      }
+      return false;
+    }
+
+    // Function to store the voted code
+    function storeVote(code) {
+      var votedCodes = localStorage.getItem("votedCodes");
+      if (votedCodes) {
+        votedCodes = JSON.parse(votedCodes);
+      } else {
+        votedCodes = [];
+      }
+      votedCodes.push(code);
+      localStorage.setItem("votedCodes", JSON.stringify(votedCodes));
+    }
+
+    // Function to reset all votes
+    function resetVotes() {
+      localStorage.removeItem("votedCodes");
+      alert("All votes have been reset!");
+    }
+  </script>
+</body>
+</html>
